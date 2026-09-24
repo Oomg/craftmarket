@@ -1,0 +1,44 @@
+/* src/components/ProductCard/product-card.css */
+.product-card {
+  display: flex;
+  flex-direction: column;
+  width: 240px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 0;
+}
+
+.product-card__image {
+  width: 100%;
+  height: 150px; /* Зробили висоту зображення 150 пікселів */
+  object-fit: cover; /* Запобігає спотворенню пропорцій фотографії */
+}
+
+.product-card__price {
+  font-weight: bold;
+}
+
+.product-card__category {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.product-card__badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+.product-card__badge--out {
+  color: #b00020;
+  background-color: #fde8e8;
+}
+
+.product-card__badge--sale {
+  color: #fff;
+  background-color: #e65100;
+}
