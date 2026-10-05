@@ -1,0 +1,14 @@
+.catalog-page {
+  padding: 20px;
+  font-family: sans-serif;
+}
+.catalog-page__results-count {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 16px;
+}
+.catalog-page__empty-message {
+  color: #d32f2f;
+  font-style: italic;
+  margin-top: 20px;
+}
