@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import SearchPanel from '../components/SearchPanel/SearchPanel';
 import ProductList from '../components/ProductList/ProductList';
+import ReviewForm from '../components/ReviewForm/ReviewForm';
+import PromoForm from '../components/PromoForm/PromoForm';
 import './catalog-page.css';
 
 function CatalogPage() {
@@ -10,6 +12,7 @@ function CatalogPage() {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState('none');
+  const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
     let isActive = true;
@@ -18,7 +21,6 @@ function CatalogPage() {
       setIsLoading(true);
       setError(null);
 
-      // Варіант 10: timeout 5 секунд
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000);
 
@@ -59,7 +61,11 @@ function CatalogPage() {
     };
   }, []);
 
-  // Фільтрація + сортування (з ЛР4)
+  const handleReviewSubmit = (review) => {
+    setReviews((prev) => [...prev, review]);
+    console.log('Новий відгук:', review);
+  };
+
   let result = products.filter((product) =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -70,7 +76,6 @@ function CatalogPage() {
     result = [...result].sort((a, b) => b.price - a.price);
   }
 
-  // Три стани
   if (isLoading) {
     return (
       <p style={{ textAlign: 'center', padding: '2rem', color: '#6b7280' }}>
@@ -112,6 +117,9 @@ function CatalogPage() {
       </p>
 
       <ProductList products={result} />
+
+      <ReviewForm onReviewSubmit={handleReviewSubmit} />
+      <PromoForm />
     </div>
   );
 }
