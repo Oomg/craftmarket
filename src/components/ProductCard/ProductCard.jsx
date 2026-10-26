@@ -3,25 +3,20 @@ import './product-card.css';
 
 const PLACEHOLDER_IMAGE = '/src/assets/product-placeholder.svg';
 
-/**
- * @param {Object} props
- * @param {string} props.name - Назва товару
- * @param {number} props.price - Ціна товару
- * @param {string} [props.image] - Шлях до зображення (необов’язковий)
- * @param {string} props.category - Категорія товару
- * @param {boolean} [props.inStock=true] - Чи є товар у наявності
- * @param {boolean} [props.onSale=false] - Чи є товар на розпродажі
- */
-function ProductCard({ name, price, image, category, inStock = true, onSale = false }) {
+function ProductCard({
+  name,
+  price,
+  image,
+  category,
+  inStock = true,
+  onSale = false,
+  onAddToCart,
+}) {
   const imageSrc = image || PLACEHOLDER_IMAGE;
 
   return (
     <article className="product-card">
-      <img
-        className="product-card__image"
-        src={imageSrc}
-        alt={name}
-      />
+      <img className="product-card__image" src={imageSrc} alt={name} />
       <h3>{name}</h3>
       <p className="product-card__price">{price} грн</p>
       <p className="product-card__category">{category}</p>
@@ -37,6 +32,24 @@ function ProductCard({ name, price, image, category, inStock = true, onSale = fa
           Розпродаж
         </span>
       )}
+
+      <button
+        type="button"
+        onClick={onAddToCart}
+        disabled={!inStock}
+        style={{
+          marginTop: '8px',
+          width: '100%',
+          padding: '8px',
+          backgroundColor: inStock ? '#0d9488' : '#d1d5db',
+          color: 'white',
+          border: 'none',
+          borderRadius: '6px',
+          cursor: inStock ? 'pointer' : 'not-allowed',
+        }}
+      >
+        {inStock ? 'До кошика' : 'Немає в наявності'}
+      </button>
     </article>
   );
 }
@@ -48,6 +61,7 @@ ProductCard.propTypes = {
   category: PropTypes.string.isRequired,
   inStock: PropTypes.bool,
   onSale: PropTypes.bool,
+  onAddToCart: PropTypes.func,
 };
 
 export default ProductCard;
