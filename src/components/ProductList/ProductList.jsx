@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import ProductCard from '../ProductCard/ProductCard';
 import styles from './ProductList.module.css';
 
-function ProductList({ products, onAddToCart }) {
+function ProductList({ products }) {
   if (products.length === 0) {
     return (
       <p className={styles.emptyMessage}>
@@ -16,12 +16,7 @@ function ProductList({ products, onAddToCart }) {
       {products.map((product) => (
         <ProductCard
           key={product.id}
-          name={product.name}
-          price={product.price}
-          image={product.image}
-          category={product.category}
-          inStock={product.inStock}
-          onAddToCart={() => onAddToCart?.(product)}
+          product={product}
         />
       ))}
     </div>
@@ -37,9 +32,9 @@ ProductList.propTypes = {
       image: PropTypes.string,
       category: PropTypes.string,
       inStock: PropTypes.bool,
+      stock: PropTypes.number, // для варіанту 10
     })
   ).isRequired,
-  onAddToCart: PropTypes.func,
 };
 
 export default ProductList;

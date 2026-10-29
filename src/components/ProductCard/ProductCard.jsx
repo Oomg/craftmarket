@@ -1,17 +1,11 @@
 import PropTypes from 'prop-types';
+import AddToCartButton from './AddToCartButton';
 import './product-card.css';
 
 const PLACEHOLDER_IMAGE = '/src/assets/product-placeholder.svg';
 
-function ProductCard({
-  name,
-  price,
-  image,
-  category,
-  inStock = true,
-  onSale = false,
-  onAddToCart,
-}) {
+function ProductCard({ product }) {
+  const { name, price, image, category, inStock = true, onSale = false } = product;
   const imageSrc = image || PLACEHOLDER_IMAGE;
 
   return (
@@ -33,35 +27,21 @@ function ProductCard({
         </span>
       )}
 
-      <button
-        type="button"
-        onClick={onAddToCart}
-        disabled={!inStock}
-        style={{
-          marginTop: '8px',
-          width: '100%',
-          padding: '8px',
-          backgroundColor: inStock ? '#0d9488' : '#d1d5db',
-          color: 'white',
-          border: 'none',
-          borderRadius: '6px',
-          cursor: inStock ? 'pointer' : 'not-allowed',
-        }}
-      >
-        {inStock ? 'До кошика' : 'Немає в наявності'}
-      </button>
+      {/* Використовуємо ізольовану кнопку */}
+      <AddToCartButton product={product} />
     </article>
   );
 }
 
 ProductCard.propTypes = {
-  name: PropTypes.string.isRequired,
-  price: PropTypes.number.isRequired,
-  image: PropTypes.string,
-  category: PropTypes.string.isRequired,
-  inStock: PropTypes.bool,
-  onSale: PropTypes.bool,
-  onAddToCart: PropTypes.func,
+  product: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+    image: PropTypes.string,
+    category: PropTypes.string,
+    inStock: PropTypes.bool,
+    onSale: PropTypes.bool,
+  }).isRequired,
 };
 
 export default ProductCard;

@@ -3,10 +3,9 @@ import SearchPanel from '../components/SearchPanel/SearchPanel';
 import ProductList from '../components/ProductList/ProductList';
 import ReviewForm from '../components/ReviewForm/ReviewForm';
 import PromoForm from '../components/PromoForm/PromoForm';
-import PropTypes from 'prop-types';
 import './catalog-page.css';
 
-function CatalogPage({ onAddToCart }) {
+function CatalogPage() {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -117,16 +116,12 @@ function CatalogPage({ onAddToCart }) {
         Знайдено товарів: {result.length}
       </p>
 
-      <ProductList products={result} onAddToCart={onAddToCart} />
+      <ProductList products={result} />
 
       <ReviewForm onReviewSubmit={handleReviewSubmit} />
       <PromoForm />
     </div>
   );
 }
-
-CatalogPage.propTypes = {
-  onAddToCart: PropTypes.func,
-};
 
 export default CatalogPage;

@@ -16,14 +16,16 @@ export function cartReducer(state, action) {
   switch (action.type) {
     case CART_ACTIONS.ADD_ITEM: {
       const { product, quantity = 1 } = action.payload;
-      const exists = state.items.some((item) => item.id === product.id);
+      const stock = product.stock ?? Infinity;
+      const exists = state.items.find((item) => item.id === product.id);
 
       if (exists) {
+        const newQuantity = Math.min(exists.quantity + quantity, stock);
         return {
           ...state,
           items: state.items.map((item) =>
             item.id === product.id
-              ? { ...item, quantity: item.quantity + quantity }
+              ? { ...item, quantity: newQuantity, stock } // Зберігаємо ліміт при оновленні
               : item
           ),
         };
@@ -34,7 +36,8 @@ export function cartReducer(state, action) {
         title: product.name || product.title,
         price: product.price,
         image: product.image,
-        quantity,
+        quantity: Math.min(quantity, stock),
+        stock: stock, // <--- Зберігаємо ліміт для нових товарів
       };
 
       return { ...state, items: [...state.items, newItem] };
@@ -58,9 +61,11 @@ export function cartReducer(state, action) {
 
       return {
         ...state,
-        items: state.items.map((item) =>
-          item.id === id ? { ...item, quantity } : item
-        ),
+        items: state.items.map((item) => {
+          if (item.id !== id) return item;
+          const stock = item.stock ?? Infinity;
+          return { ...item, quantity: Math.min(quantity, stock) }; // Блокуємо збільшення понад ліміт
+        }),
       };
     }
 

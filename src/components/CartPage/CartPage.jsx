@@ -1,19 +1,21 @@
-import PropTypes from 'prop-types';
+import { useCartContext } from '../../context/useCartContext';
 import CartItem from '../CartItem/CartItem';
 
-function CartPage({
-  items,
-  isEmpty,
-  totalCount,
-  totalPrice,
-  promoCode,
-  onUpdateQuantity,
-  onRemove,
-  onClear,
-  onApplyPromo,
-  onRemovePromo,
-  getFreeUnits,
-}) {
+function CartPage() {
+  const {
+    items,
+    isEmpty,
+    totalCount,
+    totalPrice,
+    promoCode,
+    updateQuantity,
+    removeItem,
+    clearCart,
+    applyPromo,
+    removePromo,
+    getFreeUnits,
+  } = useCartContext();
+
   if (isEmpty) {
     return (
       <div style={{ padding: '24px', textAlign: 'center', color: '#6b7280' }}>
@@ -39,8 +41,8 @@ function CartPage({
           key={item.id}
           item={item}
           freeUnits={promoCode === 'TRIO' ? getFreeUnits(item.quantity) : 0}
-          onUpdateQuantity={onUpdateQuantity}
-          onRemove={onRemove}
+          onUpdateQuantity={updateQuantity}
+          onRemove={removeItem}
         />
       ))}
 
@@ -51,7 +53,7 @@ function CartPage({
             <span style={{ color: '#059669' }}>Промокод: {promoCode}</span>
             <button
               type="button"
-              onClick={onRemovePromo}
+              onClick={removePromo}
               style={{
                 padding: '4px 10px',
                 fontSize: '13px',
@@ -68,7 +70,7 @@ function CartPage({
         ) : (
           <button
             type="button"
-            onClick={() => onApplyPromo('TRIO')}
+            onClick={() => applyPromo('TRIO')}
             style={{
               padding: '8px 14px',
               backgroundColor: '#0d9488',
@@ -96,7 +98,7 @@ function CartPage({
         <strong>Разом: {totalPrice} грн</strong>
         <button
           type="button"
-          onClick={onClear}
+          onClick={clearCart}
           style={{
             padding: '8px 14px',
             backgroundColor: '#f3f4f6',
@@ -111,19 +113,5 @@ function CartPage({
     </div>
   );
 }
-
-CartPage.propTypes = {
-  items: PropTypes.array.isRequired,
-  isEmpty: PropTypes.bool.isRequired,
-  totalCount: PropTypes.number.isRequired,
-  totalPrice: PropTypes.number.isRequired,
-  promoCode: PropTypes.string,
-  onUpdateQuantity: PropTypes.func.isRequired,
-  onRemove: PropTypes.func.isRequired,
-  onClear: PropTypes.func.isRequired,
-  onApplyPromo: PropTypes.func.isRequired,
-  onRemovePromo: PropTypes.func.isRequired,
-  getFreeUnits: PropTypes.func.isRequired,
-};
 
 export default CartPage;

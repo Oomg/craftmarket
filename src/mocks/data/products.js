@@ -6,6 +6,7 @@ export const products = [
     image: "/assets/vase-lavender.jpg",
     category: "Кераміка",
     inStock: true,
+    stock: 3,
   },
   {
     id: 2,
@@ -14,6 +15,7 @@ export const products = [
     image: "/assets/blanket-autumn.jpg",
     category: "Текстиль",
     inStock: true,
+    stock: 5,
   },
   {
     id: 3,
@@ -22,6 +24,7 @@ export const products = [
     image: "/assets/box-wood.jpg",
     category: "Дерево",
     inStock: false,
+    stock: 0,
   },
   {
     id: 4,
@@ -30,6 +33,7 @@ export const products = [
     image: "/assets/plate-painted.jpg",
     category: "Кераміка",
     inStock: true,
+    stock: 4,
   },
   {
     id: 5,
@@ -38,5 +42,6 @@ export const products = [
     image: "/assets/candle-lavender.jpg",
     category: "Свічки",
     inStock: true,
+    stock: 6,
   },
 ];
