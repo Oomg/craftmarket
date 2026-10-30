@@ -2,55 +2,55 @@ import PropTypes from 'prop-types';
 
 function CartItem({ item, freeUnits = 0, onUpdateQuantity, onRemove }) {
   const paidUnits = item.quantity - freeUnits;
+  const stock = item.stock ?? Infinity;
+  const reachedLimit = item.quantity >= stock;
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '12px',
-        padding: '12px',
-        border: '1px solid #e5e7eb',
-        borderRadius: '8px',
-        marginBottom: '8px',
-      }}
-    >
+    <div className="flex items-center gap-3 rounded-btn border border-line bg-paper p-3">
       {item.image && (
         <img
           src={item.image}
           alt={item.title}
-          style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '6px' }}
+          className="h-14 w-14 shrink-0 rounded-btn object-cover"
         />
       )}
 
-      <div style={{ flex: 1 }}>
-        <div style={{ fontWeight: 600 }}>{item.title}</div>
-        <div style={{ color: '#6b7280', fontSize: '14px' }}>
+      <div className="min-w-0 flex-1">
+        <div className="truncate font-medium text-ink">{item.title}</div>
+        <div className="text-sm text-ink-muted">
           {item.price} грн × {item.quantity}
           {freeUnits > 0 && (
-            <span style={{ color: '#059669', marginLeft: '8px' }}>
-              (безкоштовно: {freeUnits})
-            </span>
+            <span className="ml-2 text-clay-600">(безкоштовно: {freeUnits})</span>
+          )}
+          {reachedLimit && (
+            <span className="ml-2 text-red-600">(ліміт: {stock})</span>
           )}
         </div>
-        <div style={{ fontWeight: 500, marginTop: '4px' }}>
+        <div className="mt-0.5 font-semibold text-clay-700">
           {paidUnits * item.price} грн
         </div>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      {/* Кількість */}
+      <div className="flex items-center gap-1">
         <button
           type="button"
           onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
-          style={{ width: '32px', height: '32px', borderRadius: '6px', border: '1px solid #d1d5db', cursor: 'pointer' }}
+          className="flex h-8 w-8 items-center justify-center rounded-btn border border-line text-ink transition hover:bg-clay-50"
         >
           −
         </button>
-        <span style={{ minWidth: '24px', textAlign: 'center' }}>{item.quantity}</span>
+        <span className="w-6 text-center text-sm font-medium">{item.quantity}</span>
         <button
           type="button"
           onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
-          style={{ width: '32px', height: '32px', borderRadius: '6px', border: '1px solid #d1d5db', cursor: 'pointer' }}
+          disabled={reachedLimit}
+          title={reachedLimit ? `На складі лише ${stock} шт.` : undefined}
+          className={`flex h-8 w-8 items-center justify-center rounded-btn border border-line transition ${
+            reachedLimit
+              ? 'cursor-not-allowed bg-line text-ink-muted opacity-60'
+              : 'text-ink hover:bg-clay-50'
+          }`}
         >
           +
         </button>
@@ -59,15 +59,7 @@ function CartItem({ item, freeUnits = 0, onUpdateQuantity, onRemove }) {
       <button
         type="button"
         onClick={() => onRemove(item.id)}
-        style={{
-          padding: '6px 12px',
-          backgroundColor: '#fee2e2',
-          color: '#dc2626',
-          border: 'none',
-          borderRadius: '6px',
-          cursor: 'pointer',
-          fontSize: '13px',
-        }}
+        className="rounded-btn bg-red-50 px-2.5 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-100"
       >
         Видалити
       </button>
@@ -82,6 +74,7 @@ CartItem.propTypes = {
     price: PropTypes.number.isRequired,
     image: PropTypes.string,
     quantity: PropTypes.number.isRequired,
+    stock: PropTypes.number,
   }).isRequired,
   freeUnits: PropTypes.number,
   onUpdateQuantity: PropTypes.func.isRequired,

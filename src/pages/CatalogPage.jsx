@@ -97,7 +97,11 @@ function CatalogPage() {
 
   return (
     <div className="catalog-page">
-      <SearchPanel value={searchQuery} onChange={setSearchQuery} />
+      <SearchPanel
+  value={searchQuery}
+  onChange={setSearchQuery}
+  total={result.length}
+/>
 
       <div style={{ margin: '12px 0' }}>
         <label htmlFor="sortSelect">Сортування: </label>

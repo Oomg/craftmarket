@@ -1,47 +1,36 @@
 import { useCartContext } from './context/useCartContext';
 import CatalogPage from './pages/CatalogPage';
 import CartPage from './components/CartPage/CartPage';
-import './App.css';
 
 function App() {
   const { totalCount } = useCartContext();
 
   return (
-    <div className="app">
-      {/* Шапка з лічильником */}
-      <header
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '12px 24px',
-          borderBottom: '1px solid #e5e7eb',
-          marginBottom: '16px',
-        }}
-      >
-        <h1 style={{ margin: 0, fontSize: '20px' }}>CraftMarket</h1>
-        <div
-          aria-live="polite"
-          style={{
-            backgroundColor: '#0d9488',
-            color: 'white',
-            padding: '6px 14px',
-            borderRadius: '20px',
-            fontWeight: 600,
-          }}
-        >
-          Кошик: {totalCount}
+    <div className="min-h-screen bg-paper text-ink font-body">
+      {/* Шапка */}
+      <header className="border-b border-line bg-paper">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+          <h1 className="font-display text-xl font-bold text-clay-700">
+            CraftMarket
+          </h1>
+          <div
+            aria-live="polite"
+            className="rounded-full bg-clay-600 px-3.5 py-1.5 text-sm font-semibold text-white"
+          >
+            Кошик: {totalCount}
+          </div>
         </div>
       </header>
 
-      <main style={{ display: 'flex', gap: '32px', padding: '0 24px', flexWrap: 'wrap' }}>
+      {/* Основний вміст */}
+      <main className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-6 lg:flex-row">
         {/* Каталог */}
-        <div style={{ flex: 1, minWidth: '300px' }}>
+        <div className="min-w-0 flex-1">
           <CatalogPage />
         </div>
 
         {/* Панель кошика */}
-        <div style={{ width: '100%', maxWidth: '480px' }}>
+        <div className="w-full max-w-md shrink-0">
           <CartPage />
         </div>
       </main>
