@@ -1,33 +1,10 @@
 @import "tailwindcss";
+@import "./styles/tokens.css";
 
-@theme {
-  /* Кольори */
-  --color-clay-50: #fdf6f3;
-  --color-clay-100: #f8e9e2;
-  --color-clay-200: #f0d0c2;
-  --color-clay-300: #e4b09a;
-  --color-clay-400: #d48b6e;
-  --color-clay-500: #c46d4f;
-  --color-clay-600: #b4492b;
-  --color-clay-700: #953c24;
-  --color-clay-800: #7a3321;
-  --color-clay-900: #652d1f;
-
-  --color-ink: #1c1917;
-  --color-ink-muted: #78716c;
-  --color-paper: #ffffff;
-  --color-line: #e7e5e4;
-  --color-edge: #a8a29e;
-
-  /* Шрифти */
-  --font-display: "Segoe UI", system-ui, sans-serif;
-  --font-body: "Segoe UI", system-ui, sans-serif;
-
-  /* Радіуси */
-  --radius-card: 0.75rem;
-  --radius-btn: 0.5rem;
-
-  /* Тіні */
-  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.08);
-  --shadow-card-hover: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08);
+@layer base {
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink-900);
+    font-family: var(--font-sans);
+  }
 }
