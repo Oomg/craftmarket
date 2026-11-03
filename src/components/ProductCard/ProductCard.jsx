@@ -10,12 +10,13 @@ function ProductCard({ product, variant = 'grid' }) {
 
   if (isHorizontal) {
     return (
-      <article className="group flex overflow-hidden rounded-card border border-line bg-paper shadow-card transition hover:shadow-card-hover">
-        {/* Зображення ліворуч */}
+      <article className="group flex w-full overflow-hidden rounded-card border border-line bg-paper shadow-card transition hover:shadow-card-hover">
         <div className="relative h-28 w-28 shrink-0 overflow-hidden bg-clay-50 sm:h-32 sm:w-32">
           <img
             src={imageSrc}
             alt={name}
+            width="400"
+            height="300"
             className={`h-full w-full object-cover transition duration-300 ${
               inStock ? 'group-hover:scale-105' : 'grayscale'
             }`}
@@ -27,7 +28,6 @@ function ProductCard({ product, variant = 'grid' }) {
           )}
         </div>
 
-        {/* Текст праворуч */}
         <div className="flex min-w-0 flex-1 flex-col justify-between gap-1 p-3">
           <div>
             <p className="truncate text-xs font-medium uppercase tracking-wide text-ink-muted">
@@ -50,11 +50,13 @@ function ProductCard({ product, variant = 'grid' }) {
 
   // Звичайна (сітка) картка
   return (
-    <article className="group flex flex-col overflow-hidden rounded-card border border-line bg-paper shadow-card transition hover:shadow-card-hover">
-      <div className="relative aspect-[4/3] overflow-hidden bg-clay-50">
+    <article className="group flex h-full w-full flex-col overflow-hidden rounded-card border border-line bg-paper shadow-card transition hover:shadow-card-hover">
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-clay-50">
         <img
           src={imageSrc}
           alt={name}
+          width="400"
+          height="300"
           className={`h-full w-full object-cover transition duration-300 ${
             inStock ? 'group-hover:scale-105' : 'grayscale'
           }`}
@@ -71,14 +73,14 @@ function ProductCard({ product, variant = 'grid' }) {
         )}
       </div>
 
-      <div className="flex flex-1 flex-col gap-1 p-3">
+      <div className="flex flex-1 flex-col gap-1 p-3 sm:p-4">
         <p className="truncate text-xs font-medium uppercase tracking-wide text-ink-muted">
           {category}
         </p>
-        <h3 className="line-clamp-2 font-display text-base font-semibold text-ink">
+        <h3 className="line-clamp-2 font-display text-base font-semibold text-ink md:text-lg">
           {name}
         </h3>
-        <p className="mt-auto pt-1 text-lg font-bold text-clay-700">{price} грн</p>
+        <p className="mt-auto pt-2 text-lg font-bold text-clay-700">{price} грн</p>
         <div className="mt-2">
           <AddToCartButton product={product} />
         </div>

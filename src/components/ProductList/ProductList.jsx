@@ -45,7 +45,7 @@ function ProductList({ products }) {
       <div
         className={
           view === 'grid'
-            ? 'grid grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] gap-4'
+            ? 'grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 lg:gap-6'
             : 'flex flex-col gap-3'
         }
       >
