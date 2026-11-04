@@ -11,27 +11,20 @@ function AddToCartButton({ product }) {
   const disabled = !product.inStock || reachedLimit;
 
   let label = 'До кошика';
-  if (!product.inStock) {
-    label = 'Немає в наявності';
-  } else if (reachedLimit) {
-    label = `Ліміт (${stock} шт.)`;
-  } else if (inCart) {
-    label = `У кошику (${currentQty}) — додати ще`;
-  }
+  if (!product.inStock) label = 'Немає в наявності';
+  else if (reachedLimit) label = `Ліміт (${stock} шт.)`;
+  else if (inCart) label = `У кошику (${currentQty}) — додати ще`;
 
   return (
     <button
       type="button"
       disabled={disabled}
       onClick={() => addItem(product)}
-      title={reachedLimit ? `На складі лише ${stock} шт.` : undefined}
-      className={[
-        'w-full rounded-btn px-3 py-2 text-sm font-semibold transition',
-        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay-600',
+      className={
         disabled
-          ? 'cursor-not-allowed bg-line text-ink-muted'
-          : 'bg-clay-600 text-white hover:bg-clay-700 active:bg-clay-800',
-      ].join(' ')}
+          ? 'w-full cursor-not-allowed rounded-control bg-ink-100 px-3 py-2 text-sm font-semibold text-ink-500'
+          : 'w-full rounded-control bg-brand-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600'
+      }
     >
       {label}
     </button>
@@ -41,9 +34,6 @@ function AddToCartButton({ product }) {
 AddToCartButton.propTypes = {
   product: PropTypes.shape({
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    name: PropTypes.string,
-    price: PropTypes.number,
-    image: PropTypes.string,
     inStock: PropTypes.bool,
     stock: PropTypes.number,
   }).isRequired,

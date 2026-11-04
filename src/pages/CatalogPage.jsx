@@ -1,18 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import SearchPanel from '../components/SearchPanel/SearchPanel';
 import ProductList from '../components/ProductList/ProductList';
 import ReviewForm from '../components/ReviewForm/ReviewForm';
 import PromoForm from '../components/PromoForm/PromoForm';
-import './catalog-page.css';
+import ProductModal from '../components/ProductModal';
 
 function CatalogPage() {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState('none');
   const [reviews, setReviews] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  const handleCloseModal = useCallback(() => setSelectedProduct(null), []);
 
   useEffect(() => {
     let isActive = true;
@@ -20,42 +22,29 @@ function CatalogPage() {
     async function loadProducts() {
       setIsLoading(true);
       setError(null);
-
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000);
 
       try {
-        const response = await fetch('/api/products', {
-          signal: controller.signal,
-        });
-
-        if (!response.ok) {
-          throw new Error(`Сервер повернув статус ${response.status}`);
-        }
-
+        const response = await fetch('/api/products', { signal: controller.signal });
+        if (!response.ok) throw new Error(`Сервер повернув статус ${response.status}`);
         const data = await response.json();
-
-        if (isActive) {
-          setProducts(data);
-        }
+        if (isActive) setProducts(data);
       } catch (err) {
         if (isActive) {
-          if (err.name === 'AbortError') {
-            setError('Час очікування вичерпано (більше 5 секунд)');
-          } else {
-            setError(err.message);
-          }
+          setError(
+            err.name === 'AbortError'
+              ? 'Час очікування вичерпано (більше 5 секунд)'
+              : err.message
+          );
         }
       } finally {
         clearTimeout(timeoutId);
-        if (isActive) {
-          setIsLoading(false);
-        }
+        if (isActive) setIsLoading(false);
       }
     }
 
     loadProducts();
-
     return () => {
       isActive = false;
     };
@@ -63,7 +52,6 @@ function CatalogPage() {
 
   const handleReviewSubmit = (review) => {
     setReviews((prev) => [...prev, review]);
-    console.log('Новий відгук:', review);
   };
 
   let result = products.filter((product) =>
@@ -77,38 +65,30 @@ function CatalogPage() {
   }
 
   if (isLoading) {
-    return (
-      <p style={{ textAlign: 'center', padding: '2rem', color: '#6b7280' }}>
-        Завантаження каталогу…
-      </p>
-    );
+    return <p className="p-8 text-center text-ink-500">Завантаження каталогу…</p>;
   }
 
   if (error) {
     return (
-      <p
-        style={{ textAlign: 'center', padding: '2rem', color: '#dc2626' }}
-        role="alert"
-      >
+      <p className="p-8 text-center text-danger-600" role="alert">
         Не вдалося завантажити каталог: {error}
       </p>
     );
   }
 
   return (
-    <div className="catalog-page">
-      <SearchPanel
-  value={searchQuery}
-  onChange={setSearchQuery}
-  total={result.length}
-/>
+    <div>
+      <SearchPanel value={searchQuery} onChange={setSearchQuery} total={result.length} />
 
-      <div style={{ margin: '12px 0' }}>
-        <label htmlFor="sortSelect">Сортування: </label>
+      <div className="my-3">
+        <label htmlFor="sortSelect" className="mr-2 text-sm text-ink-800">
+          Сортування:
+        </label>
         <select
           id="sortSelect"
           value={sortOrder}
           onChange={(e) => setSortOrder(e.target.value)}
+          className="rounded-control border border-ink-300 px-2 py-1 text-sm"
         >
           <option value="none">Без сортування</option>
           <option value="price-asc">За ціною (від дешевих)</option>
@@ -116,14 +96,19 @@ function CatalogPage() {
         </select>
       </div>
 
-      <p className="catalog-page__results-count">
-        Знайдено товарів: {result.length}
-      </p>
+      <p className="mb-2 text-sm text-ink-600">Знайдено товарів: {result.length}</p>
 
-      <ProductList products={result} />
+      <ProductList
+        products={result}
+        onOpenDetails={setSelectedProduct}
+      />
 
       <ReviewForm onReviewSubmit={handleReviewSubmit} />
       <PromoForm />
+
+      {selectedProduct && (
+        <ProductModal product={selectedProduct} onClose={handleCloseModal} />
+      )}
     </div>
   );
 }
