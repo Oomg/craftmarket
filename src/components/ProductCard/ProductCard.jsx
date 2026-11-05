@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
+import { Link } from 'react-router';
 import AddToCartButton from './AddToCartButton';
 
 const PLACEHOLDER_IMAGE = '/src/assets/product-placeholder.svg';
 
 function ProductCard({ product, variant = 'grid', onOpenDetails }) {
-  const { name, price, image, category, inStock = true, onSale = false } = product;
+  const { id, name, price, image, category, inStock = true, onSale = false } = product;
   const imageSrc = image || PLACEHOLDER_IMAGE;
   const isHorizontal = variant === 'horizontal';
 
@@ -28,7 +29,9 @@ function ProductCard({ product, variant = 'grid', onOpenDetails }) {
               {category || 'Без категорії'}
             </p>
             <h3 className="line-clamp-2 text-sm font-semibold text-ink-900 sm:text-base">
-              {name}
+              <Link to={`/product/${id}`} className="hover:underline">
+                {name}
+              </Link>
             </h3>
           </div>
           <div className="flex items-center justify-between gap-2">
@@ -71,7 +74,9 @@ function ProductCard({ product, variant = 'grid', onOpenDetails }) {
           {category}
         </p>
         <h3 className="line-clamp-2 text-base font-semibold text-ink-900 md:text-lg">
-          {name}
+          <Link to={`/product/${id}`} className="hover:underline">
+            {name}
+          </Link>
         </h3>
         <p className="mt-auto pt-2 text-lg font-bold text-brand-700">{price} грн</p>
 

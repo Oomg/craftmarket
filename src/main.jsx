@@ -1,26 +1,25 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import App from "./App";
-import { CartProvider } from "./context/CartProvider";
-import "./index.css";
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { RouterProvider } from 'react-router';
+import { router } from './router';
+import { CartProvider } from './context/CartProvider';
+import './index.css';
 
 async function enableMocking() {
-  // У продакшені мок не запускаємо
   if (import.meta.env.PROD) {
     return;
   }
-
-  const { worker } = await import("./mocks/browser");
+  const { worker } = await import('./mocks/browser');
   return worker.start({
-    onUnhandledRequest: "bypass",
+    onUnhandledRequest: 'bypass',
   });
 }
 
 enableMocking().then(() => {
-  createRoot(document.getElementById("root")).render(
+  createRoot(document.getElementById('root')).render(
     <StrictMode>
       <CartProvider>
-        <App />
+        <RouterProvider router={router} />
       </CartProvider>
     </StrictMode>
   );
