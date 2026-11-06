@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useNavigation } from 'react-router';
 import { useCartContext } from '../context/useCartContext';
+import DevMockPanel from '../components/DevMockPanel';
 
 const CATEGORY_LINKS = [
   { slug: 'ceramics', title: 'Кераміка' },
@@ -66,6 +67,8 @@ export default function RootLayout() {
       <footer className="border-t border-ink-300 py-4 text-center text-sm text-ink-500">
         CraftMarket · вітрина виробів ручної роботи
       </footer>
+
+      {import.meta.env.DEV && <DevMockPanel />}
     </div>
   );
 }

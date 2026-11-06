@@ -8,7 +8,7 @@ const CITIES = {
   kherson: { title: 'Херсон', categories: ['Кераміка'] },
   odesa: { title: 'Одеса', categories: ['Текстиль'] },
   lviv: { title: 'Львів', categories: ['Дерево'] },
-  kyiv: { title: 'Київ', categories: ['Свічки', 'Неіснуюча'] }, // порожній або з свічками
+  kyiv: { title: 'Київ', categories: ['НемаєТакої'] }, // порожній або з свічками
 };
 
 export default function CityPage() {

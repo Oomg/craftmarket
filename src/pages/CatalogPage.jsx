@@ -1,14 +1,24 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import SearchPanel from '../components/SearchPanel/SearchPanel';
 import ProductList from '../components/ProductList/ProductList';
 import ReviewForm from '../components/ReviewForm/ReviewForm';
 import PromoForm from '../components/PromoForm/PromoForm';
 import ProductModal from '../components/ProductModal';
+import Loader from '../components/Loader';
+import ErrorMessage from '../components/ErrorMessage';
+import { useProducts } from '../hooks/useProducts';
+import { useMakers } from '../hooks/useMakers';
+import { getErrorMessage } from '../utils/getErrorMessage';
 
 function CatalogPage() {
-  const [products, setProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { status, products, error, retry } = useProducts();
+  const {
+    status: makersStatus,
+    makers,
+    error: makersError,
+    retry: retryMakers,
+  } = useMakers();
+
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState('none');
   const [reviews, setReviews] = useState([]);
@@ -16,100 +26,118 @@ function CatalogPage() {
 
   const handleCloseModal = useCallback(() => setSelectedProduct(null), []);
 
-  useEffect(() => {
-    let isActive = true;
-
-    async function loadProducts() {
-      setIsLoading(true);
-      setError(null);
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
-
-      try {
-        const response = await fetch('/api/products', { signal: controller.signal });
-        if (!response.ok) throw new Error(`Сервер повернув статус ${response.status}`);
-        const data = await response.json();
-        if (isActive) setProducts(data);
-      } catch (err) {
-        if (isActive) {
-          setError(
-            err.name === 'AbortError'
-              ? 'Час очікування вичерпано (більше 5 секунд)'
-              : err.message
-          );
-        }
-      } finally {
-        clearTimeout(timeoutId);
-        if (isActive) setIsLoading(false);
-      }
-    }
-
-    loadProducts();
-    return () => {
-      isActive = false;
-    };
-  }, []);
-
   const handleReviewSubmit = (review) => {
     setReviews((prev) => [...prev, review]);
   };
 
-  let result = products.filter((product) =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  let content;
 
-  if (sortOrder === 'price-asc') {
-    result = [...result].sort((a, b) => a.price - b.price);
-  } else if (sortOrder === 'price-desc') {
-    result = [...result].sort((a, b) => b.price - a.price);
-  }
+  if (status === 'loading') {
+    content = <Loader />;
+  } else if (status === 'error') {
+    content = (
+      <ErrorMessage
+        title="Каталог не завантажено"
+        message={getErrorMessage(error)}
+        onRetry={retry}
+      />
+    );
+  } else {
+    let result = products.filter((product) =>
+      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
-  if (isLoading) {
-    return <p className="p-8 text-center text-ink-500">Завантаження каталогу…</p>;
-  }
+    if (sortOrder === 'price-asc') {
+      result = [...result].sort((a, b) => a.price - b.price);
+    } else if (sortOrder === 'price-desc') {
+      result = [...result].sort((a, b) => b.price - a.price);
+    }
 
-  if (error) {
-    return (
-      <p className="p-8 text-center text-danger-600" role="alert">
-        Не вдалося завантажити каталог: {error}
-      </p>
+    content = (
+      <>
+        <SearchPanel
+          value={searchQuery}
+          onChange={setSearchQuery}
+          total={result.length}
+        />
+
+        <div className="my-3">
+          <label htmlFor="sortSelect" className="mr-2 text-sm text-ink-800">
+            Сортування:
+          </label>
+          <select
+            id="sortSelect"
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+            className="rounded-control border border-ink-300 px-2 py-1 text-sm"
+          >
+            <option value="none">Без сортування</option>
+            <option value="price-asc">За ціною (від дешевих)</option>
+            <option value="price-desc">За ціною (від дорогих)</option>
+          </select>
+        </div>
+
+        <p className="mb-2 text-sm text-ink-600" aria-live="polite">
+          Знайдено товарів: {result.length}
+        </p>
+
+        <ProductList products={result} onOpenDetails={setSelectedProduct} />
+
+        <ReviewForm onReviewSubmit={handleReviewSubmit} />
+        <PromoForm />
+
+        {selectedProduct && (
+          <ProductModal product={selectedProduct} onClose={handleCloseModal} />
+        )}
+      </>
     );
   }
 
   return (
-    <div>
-      <SearchPanel value={searchQuery} onChange={setSearchQuery} total={result.length} />
+    <section aria-labelledby="catalog-title">
+      <h1 id="catalog-title" className="mb-4 text-2xl font-bold text-ink-900">
+        Каталог товарів
+      </h1>
 
-      <div className="my-3">
-        <label htmlFor="sortSelect" className="mr-2 text-sm text-ink-800">
-          Сортування:
-        </label>
-        <select
-          id="sortSelect"
-          value={sortOrder}
-          onChange={(e) => setSortOrder(e.target.value)}
-          className="rounded-control border border-ink-300 px-2 py-1 text-sm"
-        >
-          <option value="none">Без сортування</option>
-          <option value="price-asc">За ціною (від дешевих)</option>
-          <option value="price-desc">За ціною (від дорогих)</option>
-        </select>
-      </div>
+      {content}
 
-      <p className="mb-2 text-sm text-ink-600">Знайдено товарів: {result.length}</p>
+      <section
+        className="mt-10 border-t border-ink-300 pt-6"
+        aria-labelledby="makers-title"
+      >
+        <h2 id="makers-title" className="mb-3 text-xl font-semibold text-ink-900">
+          Наші майстри
+        </h2>
 
-      <ProductList
-        products={result}
-        onOpenDetails={setSelectedProduct}
-      />
+        {makersStatus === 'loading' && (
+          <Loader label="Завантаження майстрів…" />
+        )}
 
-      <ReviewForm onReviewSubmit={handleReviewSubmit} />
-      <PromoForm />
+        {makersStatus === 'error' && (
+          <ErrorMessage
+            title="Не вдалося завантажити майстрів"
+            message={getErrorMessage(makersError)}
+            onRetry={retryMakers}
+          />
+        )}
 
-      {selectedProduct && (
-        <ProductModal product={selectedProduct} onClose={handleCloseModal} />
-      )}
-    </div>
+        {makersStatus === 'success' && (
+          <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {makers.map((maker) => (
+              <li
+                key={maker.id}
+                className="rounded-control border border-ink-300 bg-white p-4"
+              >
+                <p className="font-semibold text-ink-900">{maker.name}</p>
+                <p className="text-sm text-ink-600">
+                  {maker.city} · {maker.specialty}
+                </p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </section>
   );
 }
 
